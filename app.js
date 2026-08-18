@@ -932,24 +932,8 @@ function exportData(format) {
 
 /* ── Seed Data (first run) ───────────────── */
 function seedIfEmpty() {
-  if (state.seeded || state.transactions.length > 0) return;
-  const today = new Date().toISOString().substring(0,10);
-  const [y,m] = today.split('-');
-  const prevDate = `${y}-${m}-${String(Math.max(1, new Date().getDate()-3)).padStart(2,'0')}`;
-  const prev2 = `${y}-${m}-${String(Math.max(1, new Date().getDate()-7)).padStart(2,'0')}`;
-  const seeds = [
-    { type:'income',  amount:2650, categoryId:'oth',  description:'Monthly Salary',    date: prev2, note:'August paycheck' },
-    { type:'expense', amount:45.5, categoryId:'groc', description: 'Grocery Shopping',  date: today, note:'' },
-    { type:'expense', amount:1.5,  categoryId:'tran', description:'Bus Fare',          date: today, note:'' },
-    { type:'expense', amount:120,  categoryId:'shop', description:'Clothes Shopping',  date: prevDate, note:'Sale at mall' },
-    { type:'expense', amount:68,   categoryId:'food', description:'Restaurant Dinner', date: prevDate, note:'Family dinner' },
-    { type:'expense', amount:14.5, categoryId:'ent',  description:'Netflix',           date: prev2, note:'Monthly subscription' },
-    { type:'expense', amount:60,   categoryId:'bill', description:'Electricity Bill',  date: prev2, note:'' }
-  ];
-  seeds.forEach(s => {
-    state.transactions.push({ ...s, id: uid(), timestamp: new Date(s.date).getTime() + Math.random()*86400000 });
-  });
-  state.transactions.sort((a,b) => b.timestamp - a.timestamp);
+  if (state.seeded) return;
+  state.transactions = [];
   state.seeded = true;
   save();
 }
@@ -967,6 +951,11 @@ window.toggleSetupGuide = toggleSetupGuide;
 
 /* ── Init ────────────────────────────────── */
 function init() {
+  // Wipe out previous mock seed data once on first run of this version
+  if (!localStorage.getItem('expense_tracker_seed_cleaned_v2')) {
+    localStorage.removeItem('expense_tracker_v2');
+    localStorage.setItem('expense_tracker_seed_cleaned_v2', 'true');
+  }
   load();
   seedIfEmpty();
   // Set today for date inputs
