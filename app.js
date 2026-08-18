@@ -982,6 +982,9 @@ function init() {
   // Initialize Google Workspace Sync
   if (window.googleSync) {
     window.googleSync.init();
+    if (window.googleSync.isReady()) {
+      window.googleSync.pullFromDrive(true); // Silent sync on load
+    }
   }
 
   // Initial render

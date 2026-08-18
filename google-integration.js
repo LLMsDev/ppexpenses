@@ -155,12 +155,12 @@ window.googleSync = (function() {
   }
 
   // Restore state from Google Drive JSON (Pull)
-  async function pullFromDrive() {
+  async function pullFromDrive(silent = false) {
     if (!config.webAppUrl) return;
-    if (!confirm('⚠️ This will overwrite all your local transactions with the database backup from Google Drive. Continue?')) return;
+    if (!silent && !confirm('⚠️ This will overwrite all your local transactions with the database backup from Google Drive. Continue?')) return;
     
     updateSyncingIndicator(true);
-    setElementText('g-sync-status', 'Restoring database from Drive...');
+    if (!silent) setElementText('g-sync-status', 'Restoring database from Drive...');
 
     try {
       const res = await request('load');
@@ -176,15 +176,17 @@ window.googleSync = (function() {
         save();
         renderAll();
         
-        showToast('Database restored from Google Drive!', 'success');
-        setElementText('g-sync-status', `Restored database from Google Drive. Transactions loaded: ${state.transactions.length}`);
+        showToast('Database synced with Google Drive!', 'success');
+        setElementText('g-sync-status', `Last sync: ${new Date().toLocaleString()}`);
       } else {
         throw new Error('Backup file format is invalid');
       }
     } catch(e) {
       console.error('Restore failed', e);
-      showToast('Restore failed: ' + e.message, 'error');
-      setElementText('g-sync-status', 'Restore failed. Check your Google Drive backup.');
+      if (!silent) {
+        showToast('Restore failed: ' + e.message, 'error');
+        setElementText('g-sync-status', 'Restore failed. Check your Google Drive backup.');
+      }
     } finally {
       updateSyncingIndicator(false);
     }

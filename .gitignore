@@ -8,3 +8,4 @@ tunnel.log
 .DS_Store
 .agents/
 .gemini/
+.vercel
