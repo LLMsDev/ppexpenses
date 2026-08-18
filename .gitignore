@@ -1,0 +1,10 @@
+# Logs
+*.log
+serveo.log
+pinggy.log
+tunnel.log
+
+# System files
+.DS_Store
+.agents/
+.gemini/
