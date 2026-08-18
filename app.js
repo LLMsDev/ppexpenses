@@ -33,6 +33,9 @@ function save() {
   if (window.googleSync) {
     window.googleSync.autoSync();
   }
+  if (window.supabaseSync) {
+    window.supabaseSync.autoSync();
+  }
 }
 function load() {
   try {
@@ -973,6 +976,14 @@ function init() {
     window.googleSync.init();
     if (window.googleSync.isReady()) {
       window.googleSync.pullFromDrive(true); // Silent sync on load
+    }
+  }
+
+  // Initialize Supabase Sync
+  if (window.supabaseSync) {
+    window.supabaseSync.init();
+    if (window.supabaseSync.isReady()) {
+      window.supabaseSync.pullFromSupabase(true); // Silent sync on load
     }
   }
 

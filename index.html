@@ -648,44 +648,54 @@
   <div class="modal-box google-modal-box">
     <div class="modal-hdr">
       <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#4285F4;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
-        <h3 style="margin:0;font-size:1.15rem;font-weight:800;">Google Workspace Integration</h3>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
+        <h3 style="margin:0;font-size:1.15rem;font-weight:800;">Cloud Database Integration</h3>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
         <span id="g-syncing-indicator" class="sync-indicator" title="Syncing with Google Drive"></span>
+        <span id="sb-syncing-indicator" class="sync-indicator" title="Syncing with Supabase"></span>
         <button class="close-btn" onclick="closeModal('google-modal')">×</button>
       </div>
     </div>
-    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-      <div id="g-connected-user" class="google-badge" style="display:none;margin-bottom:12px;"></div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding-top: 10px;">
       
-      <!-- Setup Apps Script Form -->
-      <div id="g-credentials-section">
-        <div class="alert-box" style="margin-bottom:12px;">
-          <span style="font-size:1.2rem;margin-right:8px;">🔒</span>
-          <div style="font-size:.72rem;font-weight:500;line-height:1.4;color:var(--text);">
-            Data is sent directly to your private Google Apps Script. No third-party servers see your financial information.
-          </div>
-        </div>
-        <div class="form-group" style="margin-bottom:16px;">
-          <label class="field-lbl" style="margin-bottom:4px;display:block;">Google Apps Script Web App URL</label>
-          <input type="password" class="field-inp" id="g-script-url" placeholder="https://script.google.com/macros/s/.../exec" />
-        </div>
-        <button class="btn btn-primary btn-full" id="g-btn-connect">Connect Google Web App</button>
+      <!-- Tab Controls -->
+      <div class="sync-tabs" style="display:flex; border-bottom:1px solid var(--border); margin-bottom:14px; gap:4px;">
+        <button class="sync-tab-btn active" id="tab-btn-g" onclick="switchSyncTab('g')" style="flex:1; background:none; border:none; border-bottom:2px solid var(--primary); padding:10px; font-size:.8rem; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">☁️ Google Sheets</button>
+        <button class="sync-tab-btn" id="tab-btn-sb" onclick="switchSyncTab('sb')" style="flex:1; background:none; border:none; border-bottom:2px solid transparent; padding:10px; font-size:.8rem; font-weight:700; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">⚡ Supabase DB</button>
+      </div>
+
+      <!-- Google Sheets Panel -->
+      <div id="sync-panel-g" class="sync-panel">
+        <div id="g-connected-user" class="google-badge" style="display:none;margin-bottom:12px;"></div>
         
-        <!-- Collapsible setup guide -->
-        <div class="setup-guide-container" style="margin-top:14px;">
-          <button class="setup-guide-header" onclick="toggleSetupGuide()">
-            <span>How to setup Apps Script? (Setup Guide)</span>
-            <span id="setup-guide-arrow">▼</span>
-          </button>
-          <div id="setup-guide-body" class="setup-guide-body">
-            <ol style="margin-left: 16px; font-size: .72rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; padding-top:8px;">
-              <li>Open <a href="https://script.google.com/" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:underline;">Google Apps Script Dashboard</a>.</li>
-              <li>Click <b>New Project</b>.</li>
-              <li>Copy and paste the template code below into the code editor (replace everything in <code>Code.gs</code>):</li>
-              <div style="position:relative;">
-                <textarea readonly style="width:100%; height:110px; font-family:monospace; font-size:.65rem; padding:8px; border:1px solid var(--border); border-radius: var(--r-sm); background:#f8fafc; resize:none;" id="apps-script-code-block">
+        <!-- Setup Apps Script Form -->
+        <div id="g-credentials-section">
+          <div class="alert-box" style="margin-bottom:12px;">
+            <span style="font-size:1.2rem;margin-right:8px;">🔒</span>
+            <div style="font-size:.72rem;font-weight:500;line-height:1.4;color:var(--text);">
+              Data is sent directly to your private Google Apps Script. No third-party servers see your financial information.
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="field-lbl" style="margin-bottom:4px;display:block;">Google Apps Script Web App URL</label>
+            <input type="password" class="field-inp" id="g-script-url" placeholder="https://script.google.com/macros/s/.../exec" />
+          </div>
+          <button class="btn btn-primary btn-full" id="g-btn-connect">Connect Google Web App</button>
+          
+          <!-- Collapsible setup guide -->
+          <div class="setup-guide-container" style="margin-top:14px;">
+            <button class="setup-guide-header" onclick="toggleSetupGuide()">
+              <span>How to setup Apps Script? (Setup Guide)</span>
+              <span id="setup-guide-arrow">▼</span>
+            </button>
+            <div id="setup-guide-body" class="setup-guide-body">
+              <ol style="margin-left: 16px; font-size: .72rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; padding-top:8px;">
+                <li>Open <a href="https://script.google.com/" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:underline;">Google Apps Script Dashboard</a>.</li>
+                <li>Click <b>New Project</b>.</li>
+                <li>Copy and paste the template code below into the code editor (replace everything in <code>Code.gs</code>):</li>
+                <div style="position:relative;">
+                  <textarea readonly style="width:100%; height:110px; font-family:monospace; font-size:.65rem; padding:8px; border:1px solid var(--border); border-radius: var(--r-sm); background:#f8fafc; resize:none;" id="apps-script-code-block">
 function doPost(e) {
   try {
     var request = JSON.parse(e.postData.contents);
@@ -826,72 +836,162 @@ function generateGoogleDoc(folder, monthLabel, state, totals, breakdown) {
   doc.saveAndClose();
   return doc.getId();
 }
-                </textarea>
-                <button class="btn btn-secondary btn-sm" onclick="copyAppsScriptCode()" style="position:absolute; right:10px; bottom:10px; font-size:.6rem; padding:4px 8px; background:var(--primary); color:#fff; border:none; border-radius:4px;">Copy Code</button>
-              </div>
-              <li>Click <b>Deploy</b> (top right) -> <b>New Deployment</b>.</li>
-              <li>Click the gear icon next to "Select type" and choose <b>Web App</b>.</li>
-              <li>Configure:
-                <ul style="margin-left:14px; list-style-type:circle; padding: 2px 0;">
-                  <li>Description: Expense Tracker Backend</li>
-                  <li>Execute as: <b>Me (your-email)</b></li>
-                  <li>Who has access: <b>Anyone</b> (required for serverless requests)</li>
-                </ul>
-              </li>
-              <li>Click <b>Deploy</b>, authorize the permissions, and copy the **Web App URL** shown. Paste it in the URL field above!</li>
-            </ol>
+                  </textarea>
+                  <button class="btn btn-secondary btn-sm" onclick="copyAppsScriptCode()" style="position:absolute; right:10px; bottom:10px; font-size:.6rem; padding:4px 8px; background:var(--primary); color:#fff; border:none; border-radius:4px;">Copy Code</button>
+                </div>
+                <li>Click <b>Deploy</b> (top right) -> <b>New Deployment</b>.</li>
+                <li>Click the gear icon next to "Select type" and choose <b>Web App</b>.</li>
+                <li>Configure:
+                  <ul style="margin-left:14px; list-style-type:circle; padding: 2px 0;">
+                    <li>Description: Expense Tracker Backend</li>
+                    <li>Execute as: <b>Me (your-email)</b></li>
+                    <li>Who has access: <b>Anyone</b> (required for serverless requests)</li>
+                  </ul>
+                </li>
+                <li>Click <b>Deploy</b>, authorize the permissions, and copy the **Web App URL** shown. Paste it in the URL field above!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sync Controls (Only visible when connected) -->
+        <div id="g-sync-controls" style="display:none; margin-top: 8px;">
+          <!-- Drive Sync -->
+          <div class="g-section-card">
+            <h4 class="g-section-title">☁️ Google Drive & Sheet Backup</h4>
+            <p class="g-section-desc">Sync your transaction database directly with Google Drive JSON and Google Sheets.</p>
+            
+            <div class="g-sync-status-box" style="margin-bottom:12px;">
+              <div id="g-sync-status" style="font-size: .75rem; font-weight: 600; color: var(--text);">Checking status...</div>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+              <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.pushToDrive()">
+                📤 Sync to Workspace
+              </button>
+              <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.pullFromDrive()">
+                📥 Restore Data
+              </button>
+            </div>
+
+            <!-- Auto sync toggle -->
+            <div class="g-toggle-row" style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--border);">
+              <span class="g-toggle-lbl" style="font-size: .78rem; font-weight:700; color:var(--text);">Auto-sync on change</span>
+              <label class="switch" style="position:relative; display:inline-block; width:40px; height:22px;">
+                <input type="checkbox" id="g-auto-sync" onchange="googleSync.toggleAutoSync(this)" style="opacity:0; width:0; height:0;">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Exporters -->
+          <div class="g-section-card" style="margin-top:16px;">
+            <h4 class="g-section-title">📊 Google Sheets Database Exporter</h4>
+            <p class="g-section-desc">Sync transactions to Google Sheets. Paste a specific Sheet URL below, or leave blank to auto-create one.</p>
+            <input type="text" class="field-inp" id="g-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" oninput="googleSync.saveSheetUrl(this.value)" style="margin-bottom:10px; font-size:.72rem;" />
+            <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.exportToSheets()" style="gap:8px;">
+              <span style="font-size:1rem;">💚</span> Sync Google Sheet Database
+            </button>
+            <div id="sheet-export-status" class="export-success-message" style="font-size:.72rem; margin-top:8px; font-weight:600; color:var(--income-dark); line-height:1.4;"></div>
+          </div>
+
+          <div class="g-section-card" style="margin-top:16px;">
+            <h4 class="g-section-title">📄 Google Docs Report Generator</h4>
+            <p class="g-section-desc">Generate a monthly report document in Google Docs inside the same folder.</p>
+            <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.exportToDocs()" style="gap:8px;">
+              <span style="font-size:1rem;">💙</span> Export Monthly Report to Docs
+            </button>
+            <div id="doc-export-status" class="export-success-message" style="font-size:.72rem; margin-top:8px; font-weight:600; color:var(--income-dark); line-height:1.4;"></div>
           </div>
         </div>
       </div>
 
-      <!-- Sync Controls (Only visible when connected) -->
-      <div id="g-sync-controls" style="display:none; margin-top: 8px;">
-        <!-- Drive Sync -->
-        <div class="g-section-card">
-          <h4 class="g-section-title">☁️ Google Drive & Sheet Backup</h4>
-          <p class="g-section-desc">Sync your transaction database directly with Google Drive JSON and Google Sheets.</p>
-          
-          <div class="g-sync-status-box" style="margin-bottom:12px;">
-            <div id="g-sync-status" style="font-size: .75rem; font-weight: 600; color: var(--text);">Checking status...</div>
+      <!-- Supabase Panel -->
+      <div id="sync-panel-sb" class="sync-panel" style="display:none;">
+        <div id="sb-connected-user" class="google-badge" style="display:none;margin-bottom:12px;"></div>
+        
+        <!-- Setup Supabase Form -->
+        <div id="sb-credentials-section">
+          <div class="alert-box" style="margin-bottom:12px;">
+            <span style="font-size:1.2rem;margin-right:8px;">🔒</span>
+            <div style="font-size:.72rem;font-weight:500;line-height:1.4;color:var(--text);">
+              Your data is saved directly in your personal Supabase database. No middle-man servers are involved.
+            </div>
           </div>
-          
-          <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.pushToDrive()">
-              📤 Sync to Workspace
-            </button>
-            <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.pullFromDrive()">
-              📥 Restore Data
-            </button>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="field-lbl" style="margin-bottom:4px;display:block;">Supabase Project URL</label>
+            <input type="text" class="field-inp" id="sb-url" placeholder="https://your-project.supabase.co" />
           </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="field-lbl" style="margin-bottom:4px;display:block;">Supabase API Anon Key</label>
+            <input type="password" class="field-inp" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
+          </div>
+          <button class="btn btn-primary btn-full" id="sb-btn-connect">Connect Supabase Project</button>
+          
+          <!-- Setup SQL Query instructions -->
+          <div class="setup-guide-container" style="margin-top:14px;">
+            <button class="setup-guide-header" onclick="toggleSbSetupGuide()">
+              <span>Setup Instructions (Required SQL Script)</span>
+              <span id="sb-setup-guide-arrow">▼</span>
+            </button>
+            <div id="sb-setup-guide-body" class="setup-guide-body" style="display:none; padding-top:8px;">
+              <ol style="margin-left: 16px; font-size: .72rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; padding-top:4px;">
+                <li>Log in to your <b><a href="https://supabase.com/" target="_blank" style="color:var(--primary);font-weight:700;text-decoration:underline;">Supabase Dashboard</a></b>.</li>
+                <li>Create a <b>New Project</b> (set project name and database password).</li>
+                <li>Wait for the project to provision, then click on the <b>SQL Editor</b> on the left menu (represented by a <code>SQL</code> terminal icon).</li>
+                <li>Click <b>New query</b>, paste the SQL script below, and click **Run**:</li>
+                <div style="position:relative;">
+                  <textarea readonly style="width:100%; height:95px; font-family:monospace; font-size:.65rem; padding:8px; border:1px solid var(--border); border-radius: var(--r-sm); background:#f8fafc; resize:none;" id="sb-sql-code-block">-- Create backups table for your expense tracker
+create table expense_backups (
+  id text primary key default 'default',
+  state jsonb not null,
+  updated_at timestamp with time zone default timezone.now()
+);
 
-          <!-- Auto sync toggle -->
-          <div class="g-toggle-row" style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--border);">
-            <span class="g-toggle-lbl" style="font-size: .78rem; font-weight:700; color:var(--text);">Auto-sync on change</span>
-            <label class="switch" style="position:relative; display:inline-block; width:40px; height:22px;">
-              <input type="checkbox" id="g-auto-sync" onchange="googleSync.toggleAutoSync(this)" style="opacity:0; width:0; height:0;">
-              <span class="slider round"></span>
-            </label>
+-- Insert initial empty state
+insert into expense_backups (id, state)
+values ('default', '{"transactions":[]}'::jsonb);
+
+-- Enable Read & Write permissions for Anon Key (bypasses Auth login)
+alter table expense_backups enable row level security;
+create policy "Allow public read" on expense_backups for select using (true);
+create policy "Allow public write" on expense_backups for all using (true) with check (true);</textarea>
+                  <button class="btn btn-secondary btn-sm" onclick="copySbSqlCode()" style="position:absolute; right:10px; bottom:10px; font-size:.6rem; padding:4px 8px; background:var(--primary); color:#fff; border:none; border-radius:4px;">Copy SQL</button>
+                </div>
+                <li>Go to **Settings** (gear icon) -> **API** -> Copy the **Project URL** and the **`anon` `public` Key**. Paste them above and click Connect!</li>
+              </ol>
+            </div>
           </div>
         </div>
 
-        <!-- Exporters -->
-        <div class="g-section-card" style="margin-top:16px;">
-          <h4 class="g-section-title">📊 Google Sheets Database Exporter</h4>
-          <p class="g-section-desc">Sync transactions to Google Sheets. Paste a specific Sheet URL below, or leave blank to auto-create one.</p>
-          <input type="text" class="field-inp" id="g-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" oninput="googleSync.saveSheetUrl(this.value)" style="margin-bottom:10px; font-size:.72rem;" />
-          <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.exportToSheets()" style="gap:8px;">
-            <span style="font-size:1rem;">💚</span> Sync Google Sheet Database
-          </button>
-          <div id="sheet-export-status" class="export-success-message" style="font-size:.72rem; margin-top:8px; font-weight:600; color:var(--income-dark); line-height:1.4;"></div>
-        </div>
+        <!-- Sync Controls (Only visible when connected) -->
+        <div id="sb-sync-controls" style="display:none; margin-top: 8px;">
+          <div class="g-section-card">
+            <h4 class="g-section-title">⚡ Supabase Database Backups</h4>
+            <p class="g-section-desc">Sync and back up your transaction database securely inside your Supabase project.</p>
+            
+            <div class="g-sync-status-box" style="margin-bottom:12px;">
+              <div id="sb-sync-status" style="font-size: .75rem; font-weight: 600; color: var(--text);">Checking status...</div>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+              <button class="btn btn-secondary btn-full btn-sm" onclick="supabaseSync.pushToSupabase()">
+                📤 Sync to Supabase
+              </button>
+              <button class="btn btn-secondary btn-full btn-sm" onclick="supabaseSync.pullFromSupabase()">
+                📥 Restore from Supabase
+              </button>
+            </div>
 
-        <div class="g-section-card" style="margin-top:16px;">
-          <h4 class="g-section-title">📄 Google Docs Report Generator</h4>
-          <p class="g-section-desc">Generate a monthly report document in Google Docs inside the same folder.</p>
-          <button class="btn btn-secondary btn-full btn-sm" onclick="googleSync.exportToDocs()" style="gap:8px;">
-            <span style="font-size:1rem;">💙</span> Export Monthly Report to Docs
-          </button>
-          <div id="doc-export-status" class="export-success-message" style="font-size:.72rem; margin-top:8px; font-weight:600; color:var(--income-dark); line-height:1.4;"></div>
+            <!-- Auto sync toggle -->
+            <div class="g-toggle-row" style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:1px dashed var(--border);">
+              <span class="g-toggle-lbl" style="font-size: .78rem; font-weight:700; color:var(--text);">Auto-sync on change</span>
+              <label class="switch" style="position:relative; display:inline-block; width:40px; height:22px;">
+                <input type="checkbox" id="sb-auto-sync" onchange="supabaseSync.toggleAutoSync(this)" style="opacity:0; width:0; height:0;">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -908,8 +1008,58 @@ function generateGoogleDoc(folder, monthLabel, state, totals, breakdown) {
     showToast("Apps Script code copied to clipboard!");
   }
   window.copyAppsScriptCode = copyAppsScriptCode;
+
+  function switchSyncTab(tab) {
+    document.querySelectorAll('.sync-panel').forEach(p => p.style.display = 'none');
+    const btnG = document.getElementById('tab-btn-g');
+    const btnSb = document.getElementById('tab-btn-sb');
+    if (tab === 'g') {
+      document.getElementById('sync-panel-g').style.display = 'block';
+      if (btnG) {
+        btnG.style.borderBottomColor = 'var(--primary)';
+        btnG.style.color = 'var(--text)';
+      }
+      if (btnSb) {
+        btnSb.style.borderBottomColor = 'transparent';
+        btnSb.style.color = 'var(--muted)';
+      }
+    } else {
+      document.getElementById('sync-panel-sb').style.display = 'block';
+      if (btnG) {
+        btnG.style.borderBottomColor = 'transparent';
+        btnG.style.color = 'var(--muted)';
+      }
+      if (btnSb) {
+        btnSb.style.borderBottomColor = 'var(--primary)';
+        btnSb.style.color = 'var(--text)';
+      }
+    }
+  }
+  window.switchSyncTab = switchSyncTab;
+
+  function toggleSbSetupGuide() {
+    const body = document.getElementById('sb-setup-guide-body');
+    const arrow = document.getElementById('sb-setup-guide-arrow');
+    if (body && arrow) {
+      const isShown = (body.style.display === 'block');
+      body.style.display = isShown ? 'none' : 'block';
+      arrow.textContent = isShown ? '▼' : '▲';
+    }
+  }
+  window.toggleSbSetupGuide = toggleSbSetupGuide;
+
+  function copySbSqlCode() {
+    var copyText = document.getElementById("sb-sql-code-block");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    showToast("SQL script copied to clipboard!");
+  }
+  window.copySbSqlCode = copySbSqlCode;
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="google-integration.js?v=2.2"></script>
+<script src="supabase-integration.js?v=2.2"></script>
 <script src="app.js?v=2.2"></script>
 </body>
 </html>
