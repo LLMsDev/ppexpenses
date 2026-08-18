@@ -661,12 +661,12 @@
       
       <!-- Tab Controls -->
       <div class="sync-tabs" style="display:flex; border-bottom:1px solid var(--border); margin-bottom:14px; gap:4px;">
-        <button class="sync-tab-btn active" id="tab-btn-g" onclick="switchSyncTab('g')" style="flex:1; background:none; border:none; border-bottom:2px solid var(--primary); padding:10px; font-size:.8rem; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">☁️ Google Sheets</button>
-        <button class="sync-tab-btn" id="tab-btn-sb" onclick="switchSyncTab('sb')" style="flex:1; background:none; border:none; border-bottom:2px solid transparent; padding:10px; font-size:.8rem; font-weight:700; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">⚡ Supabase DB</button>
+        <button class="sync-tab-btn" id="tab-btn-g" onclick="switchSyncTab('g')" style="flex:1; background:none; border:none; border-bottom:2px solid transparent; padding:10px; font-size:.8rem; font-weight:700; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">☁️ Google Sheets</button>
+        <button class="sync-tab-btn active" id="tab-btn-sb" onclick="switchSyncTab('sb')" style="flex:1; background:none; border:none; border-bottom:2px solid var(--primary); padding:10px; font-size:.8rem; font-weight:700; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">⚡ Supabase DB</button>
       </div>
 
       <!-- Google Sheets Panel -->
-      <div id="sync-panel-g" class="sync-panel">
+      <div id="sync-panel-g" class="sync-panel" style="display:none;">
         <div id="g-connected-user" class="google-badge" style="display:none;margin-bottom:12px;"></div>
         
         <!-- Setup Apps Script Form -->
@@ -907,7 +907,7 @@ function generateGoogleDoc(folder, monthLabel, state, totals, breakdown) {
       </div>
 
       <!-- Supabase Panel -->
-      <div id="sync-panel-sb" class="sync-panel" style="display:none;">
+      <div id="sync-panel-sb" class="sync-panel" style="display:block;">
         <div id="sb-connected-user" class="google-badge" style="display:none;margin-bottom:12px;"></div>
         
         <!-- Setup Supabase Form -->
